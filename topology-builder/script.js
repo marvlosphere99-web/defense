@@ -20,6 +20,76 @@
   };
   const legendOrder = Object.keys(nodeTypes);
 
+  // ---------- Node icons ----------
+  // Same hand-drawn line icons as the Packet Journey Visualizer, so a
+  // topology built here looks the same when opened there. Local -12..12
+  // coordinate box, translated onto each node at render time.
+  const nodeIconShapes = {
+    client: [ // monitor + stand
+      { tag: 'rect', attrs: { x: -8, y: -8, width: 16, height: 11, rx: 1.3 } },
+      { tag: 'line', attrs: { x1: 0, y1: 3, x2: 0, y2: 6 } },
+      { tag: 'line', attrs: { x1: -5, y1: 6, x2: 5, y2: 6 } },
+    ],
+    network: [ // router with antennas
+      { tag: 'rect', attrs: { x: -9, y: -1, width: 18, height: 7, rx: 1.5 } },
+      { tag: 'line', attrs: { x1: -5, y1: -1, x2: -7, y2: -8 } },
+      { tag: 'line', attrs: { x1: 5, y1: -1, x2: 7, y2: -8 } },
+      { tag: 'circle', attrs: { cx: -7, cy: -8, r: 0.9 }, fill: true },
+      { tag: 'circle', attrs: { cx: 7, cy: -8, r: 0.9 }, fill: true },
+    ],
+    security: [ // shield with checkmark
+      { tag: 'path', attrs: { d: 'M0,-9 L7,-6 L7,1 C7,5.5 3.5,8.5 0,9.5 C-3.5,8.5 -7,5.5 -7,1 L-7,-6 Z' } },
+      { tag: 'path', attrs: { d: 'M-3,0 L-0.5,2.5 L4,-3' } },
+    ],
+    gateway: [ // one splits into two (load balancing)
+      { tag: 'circle', attrs: { cx: 0, cy: -8, r: 1.6 }, fill: true },
+      { tag: 'line', attrs: { x1: 0, y1: -6.5, x2: -6, y2: 2 } },
+      { tag: 'line', attrs: { x1: 0, y1: -6.5, x2: 6, y2: 2 } },
+      { tag: 'circle', attrs: { cx: -6, cy: 4, r: 1.6 }, fill: true },
+      { tag: 'circle', attrs: { cx: 6, cy: 4, r: 1.6 }, fill: true },
+    ],
+    compute: [ // server rack, 3 units with status LEDs
+      { tag: 'rect', attrs: { x: -9, y: -9, width: 18, height: 5, rx: 1 } },
+      { tag: 'rect', attrs: { x: -9, y: -2, width: 18, height: 5, rx: 1 } },
+      { tag: 'rect', attrs: { x: -9, y: 5, width: 18, height: 5, rx: 1 } },
+      { tag: 'circle', attrs: { cx: -6.5, cy: -6.5, r: 0.7 }, fill: true },
+      { tag: 'circle', attrs: { cx: -6.5, cy: 0.5, r: 0.7 }, fill: true },
+      { tag: 'circle', attrs: { cx: -6.5, cy: 7.5, r: 0.7 }, fill: true },
+    ],
+    storage: [ // database cylinder
+      { tag: 'ellipse', attrs: { cx: 0, cy: -6, rx: 8, ry: 3 } },
+      { tag: 'path', attrs: { d: 'M-8,-6 L-8,6 A8,3 0 0 0 8,6 L8,-6' } },
+      { tag: 'path', attrs: { d: 'M-8,0 A8,3 0 0 0 8,0' } },
+    ],
+    queue: [ // messages in line feeding an arrow
+      { tag: 'line', attrs: { x1: -9, y1: 0, x2: 7, y2: 0 } },
+      { tag: 'circle', attrs: { cx: -6, cy: 0, r: 1.8 }, fill: true },
+      { tag: 'circle', attrs: { cx: -1, cy: 0, r: 1.8 }, fill: true },
+      { tag: 'circle', attrs: { cx: 4, cy: 0, r: 1.8 }, fill: true },
+      { tag: 'path', attrs: { d: 'M7,-2.2 L11,0 L7,2.2 Z' }, fill: true },
+    ],
+    cloud: [ // solid cloud silhouette (overlapping filled shapes)
+      { tag: 'rect', attrs: { x: -9, y: -1, width: 19, height: 6.5, rx: 3.2 }, fill: true },
+      { tag: 'circle', attrs: { cx: -5, cy: -1, r: 4.2 }, fill: true },
+      { tag: 'circle', attrs: { cx: 1, cy: -3.5, r: 5.2 }, fill: true },
+      { tag: 'circle', attrs: { cx: 6.5, cy: -0.5, r: 3.8 }, fill: true },
+    ],
+  };
+
+  function buildNodeIcon(type, cx, cy) {
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('class', 'node-icon');
+    g.setAttribute('transform', `translate(${cx},${cy})`);
+    const shapes = nodeIconShapes[type] || [];
+    shapes.forEach((shape) => {
+      const el = document.createElementNS(SVG_NS, shape.tag);
+      Object.entries(shape.attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      if (shape.fill) el.setAttribute('class', 'icon-fill');
+      g.appendChild(el);
+    });
+    return g;
+  }
+
   // ---------- State ----------
   // nodes: { id -> {x,y,label,sub,type} }
   // edges: [ {from,to,label} ]
@@ -236,7 +306,9 @@
       sub.setAttribute('x', n.x); sub.setAttribute('y', n.y + 54);
       sub.textContent = n.sub || '';
 
-      g.append(ring, circle, label, sub);
+      const icon = buildNodeIcon(n.type, n.x, n.y);
+
+      g.append(ring, circle, icon, label, sub);
 
       const routeIdx = routeInProgress.indexOf(id);
       if (routeIdx !== -1) {

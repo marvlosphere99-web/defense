@@ -340,6 +340,25 @@ input[type="range"] {
   stroke-width: 1.5;
 }
 
+.node-icon {
+  pointer-events: none;
+}
+.node-icon path,
+.node-icon rect,
+.node-icon line,
+.node-icon circle,
+.node-icon ellipse {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.node-icon .icon-fill {
+  fill: var(--text);
+  stroke: none;
+}
+
 .node-ring {
   fill: none;
   stroke: var(--accent);
