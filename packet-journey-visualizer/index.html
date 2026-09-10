@@ -7,6 +7,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="rotateOverlay" class="rotate-overlay">
+    <svg class="phone-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path class="rotate-arrow" d="M38 20 A14 14 0 1 1 32 8.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      <path class="rotate-arrow" d="M31 5 L32 8.7 L35.7 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <g class="phone-shape">
+        <rect x="14" y="6" width="20" height="36" rx="3" stroke="currentColor" stroke-width="2.4"/>
+        <line x1="24" y1="35" x2="24" y2="35.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <p>Rotate your device to landscape for the best experience.</p>
+    <button id="dismissRotate" class="btn btn-ghost">Continue anyway</button>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <span class="brand-dot" aria-hidden="true"></span>
@@ -129,5 +142,20 @@
 
   <script src="script.js"></script>
   <script type="module" src="backend.js"></script>
+  <script>
+    const rotateOverlay = document.getElementById('rotateOverlay');
+    const dismissRotateBtn = document.getElementById('dismissRotate');
+    if (sessionStorage.getItem('rotateDismissed') === '1') rotateOverlay.classList.add('dismissed');
+    dismissRotateBtn.addEventListener('click', () => {
+      rotateOverlay.classList.add('dismissed');
+      sessionStorage.setItem('rotateDismissed', '1');
+    });
+    window.matchMedia('(orientation: landscape)').addEventListener('change', (e) => {
+      if (e.matches) {
+        rotateOverlay.classList.remove('dismissed');
+        sessionStorage.removeItem('rotateDismissed');
+      }
+    });
+  </script>
 </body>
 </html>

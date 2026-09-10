@@ -522,3 +522,54 @@ input[type="range"] {
   opacity: 0.55;
   pointer-events: none;
 }
+
+/* ---------- Rotate-device prompt (mobile portrait only) ---------- */
+
+.rotate-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(11, 15, 23, 0.97);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+  padding: 24px;
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .rotate-overlay:not(.dismissed) {
+    display: flex;
+  }
+}
+
+.rotate-overlay .phone-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--accent);
+}
+
+.rotate-overlay .phone-shape {
+  animation: rotate-phone 1.8s ease-in-out infinite;
+  transform-origin: 24px 24px;
+}
+
+@keyframes rotate-phone {
+  0%, 15% { transform: rotate(0deg); }
+  50%, 65% { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.rotate-overlay .rotate-arrow {
+  opacity: 0.7;
+}
+
+.rotate-overlay p {
+  max-width: 260px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0;
+}
