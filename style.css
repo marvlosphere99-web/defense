@@ -1,0 +1,123 @@
+:root {
+  --bg: #0b0f17;
+  --panel-bg: #10151f;
+  --border: #202a3a;
+  --text: #e6ebf5;
+  --text-dim: #8a97ab;
+  --accent: #4fd1c5;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at 30% 0%, #101a28 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.topbar {
+  text-align: center;
+  padding: 56px 20px 36px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.brand h1 {
+  font-size: 28px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.brand-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px 3px rgba(79, 209, 197, 0.35);
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 15px;
+  margin: 12px 0 0;
+}
+
+.grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: block;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 26px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  background: rgba(79, 209, 197, 0.12);
+  border: 1px solid rgba(79, 209, 197, 0.3);
+}
+
+.card-icon.packet   { background: rgba(79, 141, 253, 0.14); border-color: rgba(79, 141, 253, 0.4); }
+.card-icon.topology { background: rgba(79, 209, 197, 0.14); border-color: rgba(79, 209, 197, 0.4); }
+.card-icon.latency  { background: rgba(245, 166, 35, 0.14); border-color: rgba(245, 166, 35, 0.4); }
+.card-icon.ai       { background: rgba(192, 132, 252, 0.14); border-color: rgba(192, 132, 252, 0.4); }
+
+.card h2 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+
+.card p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  margin: 0 0 16px;
+}
+
+.card-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.footer a {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: var(--accent);
+}
