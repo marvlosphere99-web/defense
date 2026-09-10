@@ -1,0 +1,387 @@
+:root {
+  --bg: #0b0f17;
+  --panel-bg: #10151f;
+  --border: #202a3a;
+  --text: #e6ebf5;
+  --text-dim: #8a97ab;
+  --accent: #4fd1c5;
+  --accent-dim: rgba(79, 209, 197, 0.15);
+  --danger: #ff5d6c;
+  --node-fill: #0b0f17;
+  --node-stroke: #3a4a63;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+/* Author rules below set `display` on several elements that are also
+   toggled via the `hidden` attribute (e.g. .row, .node-type-picker).
+   Author CSS always beats the UA stylesheet's `[hidden]{display:none}`
+   regardless of specificity, so without this override those elements
+   would stay visible while "hidden". */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand h1 { font-size: 17px; margin: 0; font-weight: 600; }
+.brand-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px 2px var(--accent-dim);
+}
+
+.toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.name-input { width: 220px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  padding: 16px;
+  height: calc(100vh - 60px);
+  min-height: 560px;
+}
+
+/* Grid items default to min-height:auto, which lets their intrinsic
+   content size override the parent's explicit height. Without this,
+   the tall side panel silently stretches .layout past 100vh. */
+.layout > * { min-height: 0; }
+
+.canvas-pane {
+  position: relative;
+  background: radial-gradient(circle at 30% 20%, #101a28 0%, var(--bg) 70%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#canvas { width: 100%; height: 100%; display: block; cursor: default; }
+
+.mode-toolbar {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 6px;
+  background: rgba(11, 15, 23, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.mode-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.mode-btn:hover { color: var(--text); }
+
+.mode-btn[aria-pressed="true"] {
+  background: var(--accent-dim);
+  border-color: rgba(79, 209, 197, 0.4);
+  color: var(--accent);
+}
+
+.node-type-picker {
+  position: absolute;
+  top: 62px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(11, 15, 23, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+  z-index: 2;
+}
+
+.hint-overlay {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  max-width: 320px;
+  background: rgba(11, 15, 23, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+  z-index: 2;
+}
+
+.legend-overlay {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  max-width: min(560px, calc(100% - 28px));
+  padding: 10px 14px;
+  background: rgba(11, 15, 23, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--node-fill);
+  border: 2px solid currentColor;
+  flex-shrink: 0;
+}
+
+.side-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.panel h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+}
+
+.empty-state {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.hint-text {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.field {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.field span { display: block; margin-bottom: 5px; }
+
+.text-input, .select, .json-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #182333;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.json-input {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.select { cursor: pointer; }
+.text-input:focus, .select:focus, .json-input:focus { outline: 1px solid var(--accent); }
+
+.row { display: flex; gap: 8px; margin-bottom: 10px; }
+.row > * { flex: 1; }
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: #182333;
+  color: var(--text);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn:hover { border-color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #06231f;
+  font-weight: 600;
+}
+
+.btn-ghost { background: transparent; }
+.full-width { width: 100%; }
+
+.status-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  min-height: 16px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.list-empty {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.route-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #182333;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.route-row.broken { border-color: var(--danger); }
+
+.route-path { flex: 1; word-break: break-word; }
+.route-path .broken-tag { color: var(--danger); font-size: 10px; margin-left: 6px; }
+
+.route-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+.route-delete:hover { color: var(--danger); }
+
+/* ---------- SVG canvas elements ---------- */
+
+.link-line { stroke: var(--node-stroke); stroke-width: 2; }
+.link-hit { stroke: transparent; stroke-width: 16; cursor: pointer; }
+.link-group.selected .link-line { stroke: var(--accent); stroke-width: 3; }
+.link-label {
+  fill: var(--text-dim);
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.route-preview-line {
+  stroke: #facc15;
+  stroke-width: 3;
+  stroke-dasharray: 6 5;
+  fill: none;
+  pointer-events: none;
+}
+
+.node-group { cursor: grab; }
+.node-group:active { cursor: grabbing; }
+
+.node-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 0;
+}
+.node-group.selected .node-ring { opacity: 1; }
+.node-group.pending .node-ring {
+  opacity: 1;
+  stroke: #facc15;
+  stroke-dasharray: 4 3;
+}
+
+.node-circle {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+  stroke-width: 2;
+}
+
+.node-label {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.node-sub {
+  fill: var(--text-dim);
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.route-badge circle {
+  fill: #facc15;
+  stroke: #06231f;
+  stroke-width: 1.5;
+}
+.route-badge text {
+  fill: #06231f;
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  .side-pane { max-height: none; }
+  .canvas-pane { height: 480px; }
+}

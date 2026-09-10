@@ -1,0 +1,33 @@
+{
+  "name": "ai-network-behaviour-profiler",
+  "version": "1.0.0",
+  "description": "AI-Based Network Behaviour Profiling System desktop app",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.behaviourprofiler.app",
+    "productName": "AI Network Behaviour Profiler",
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "script.js"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "network-delay-latency-dashboard",
+  "version": "1.0.0",
+  "description": "Network Delay & Latency Simulation Dashboard desktop app",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.latencydashboard.app",
+    "productName": "Network Delay and Latency Dashboard",
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "script.js"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}

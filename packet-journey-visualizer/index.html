@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-Time Packet Journey Visualizer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <h1>Packet Journey Visualizer</h1>
+    </div>
+    <div class="stats" role="status" aria-label="Simulation statistics">
+      <div class="stat"><span class="stat-label">Sent</span><span id="statSent">0</span></div>
+      <div class="stat"><span class="stat-label">Delivered</span><span id="statDelivered">0</span></div>
+      <div class="stat"><span class="stat-label">Dropped</span><span id="statDropped">0</span></div>
+      <div class="stat"><span class="stat-label">Avg Latency</span><span id="statLatency">0 ms</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="network-pane">
+      <svg id="networkSvg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated diagram of the selected network topology"></svg>
+      <div id="nodeLegend" class="legend-overlay" aria-label="Node type legend"></div>
+    </section>
+
+    <aside class="control-pane">
+      <div class="panel">
+        <h2>Controls</h2>
+
+        <label class="field">
+          <span>Network topology</span>
+          <select id="topologySelect" class="select">
+            <option value="enterprise">Enterprise LAN</option>
+            <option value="home">Home Network</option>
+            <option value="cloud">Cloud / CDN</option>
+            <option value="microservices">Microservices</option>
+            <option value="isp">ISP Backbone</option>
+          </select>
+        </label>
+
+        <div class="row">
+          <button id="playPauseBtn" class="btn btn-primary" aria-pressed="false">Pause</button>
+          <button id="sendOneBtn" class="btn">Send Packet</button>
+        </div>
+
+        <div class="row">
+          <button id="autoSendBtn" class="btn btn-toggle" aria-pressed="true">Auto-Send: ON</button>
+        </div>
+
+        <label class="field" id="rateField">
+          <span>Auto-send rate: <b id="rateLabel">1.0</b> / sec</span>
+          <input type="range" id="rateSlider" min="0" max="5" step="0.2" value="1" aria-label="Auto-send rate, packets per second">
+        </label>
+
+        <label class="field">
+          <span>Simulated latency: <b id="latLabel">1x</b></span>
+          <input type="range" id="speedSlider" min="0.3" max="3" step="0.1" value="1" aria-label="Simulated latency multiplier">
+        </label>
+
+        <label class="field">
+          <span>Packet loss: <b id="lossLabel">2%</b></span>
+          <input type="range" id="lossSlider" min="0" max="30" step="1" value="2" aria-label="Packet loss percentage">
+        </label>
+
+        <div class="field">
+          <span id="protoMixLabel">Protocol mix</span>
+          <div class="checks" role="group" aria-labelledby="protoMixLabel">
+            <label><input type="checkbox" class="proto-check" value="TCP" checked> <i class="swatch tcp" aria-hidden="true"></i>TCP</label>
+            <label><input type="checkbox" class="proto-check" value="UDP" checked> <i class="swatch udp" aria-hidden="true"></i>UDP</label>
+            <label><input type="checkbox" class="proto-check" value="ICMP" checked> <i class="swatch icmp" aria-hidden="true"></i>ICMP</label>
+            <label><input type="checkbox" class="proto-check" value="HTTP" checked> <i class="swatch http" aria-hidden="true"></i>HTTP</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <button id="resetBtn" class="btn btn-ghost">Reset Simulation</button>
+          <button id="clearLogBtn" class="btn btn-ghost">Clear Log</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Session</h2>
+        <p class="account-line" id="sessionStatusLine">Connecting…</p>
+        <button id="newSessionBtn" class="btn btn-ghost">Start New Session</button>
+        <div id="authStatus" class="status-text" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="panel requires-auth">
+        <h2>My Topologies</h2>
+        <div id="customTopologyList" class="list"></div>
+        <details class="topology-editor">
+          <summary>Create / edit a custom topology</summary>
+          <label class="field">
+            <span>Name</span>
+            <input type="text" id="topologyNameInput" class="text-input" placeholder="e.g. Campus WAN">
+          </label>
+          <label class="field">
+            <span>Topology JSON (nodes / edges / routes)</span>
+            <textarea id="topologyJsonInput" class="json-input" rows="9" spellcheck="false" placeholder='{
+  "nodes": { "a": {"x":100,"y":200,"label":"A","sub":"","type":"client"} },
+  "edges": [["a","b"]],
+  "routes": [["a","b"]]
+}'></textarea>
+          </label>
+          <div class="row">
+            <button id="topologyTemplateBtn" class="btn btn-ghost">Use Current as Template</button>
+            <button id="saveTopologyBtn" class="btn btn-primary">Save Topology</button>
+          </div>
+        </details>
+        <div id="topologyStatus" class="status-text" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="panel requires-auth">
+        <h2>Run History</h2>
+        <button id="saveRunBtn" class="btn btn-primary full-width">Save Current Run</button>
+        <div id="runHistoryList" class="list"></div>
+        <div id="historyStatus" class="status-text" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="panel log-panel">
+        <h2>Event Log</h2>
+        <div id="eventLog" class="event-log" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+  <script type="module" src="backend.js"></script>
+</body>
+</html>

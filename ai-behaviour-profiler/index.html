@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Based Network Behaviour Profiling System</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" id="statusDot" aria-hidden="true"></span>
+      <h1>Behaviour Profiler</h1>
+    </div>
+    <div class="stats" role="status" aria-label="Detector statistics">
+      <div class="stat"><span class="stat-label">Status</span><span id="statStatus">Learning…</span></div>
+      <div class="stat"><span class="stat-label">Ticks</span><span id="statTicks">0</span></div>
+      <div class="stat"><span class="stat-label">Anomalies</span><span id="statAnomalies">0</span></div>
+      <div class="stat"><span class="stat-label">F1 Score</span><span id="statF1">—</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="main-pane">
+      <div class="chart-panel">
+        <div class="chart-header">
+          <h2>Composite Anomaly Score</h2>
+          <div class="chart-legend">
+            <span class="legend-swatch score"></span> score
+            <span class="legend-swatch threshold"></span> threshold
+            <span class="legend-swatch attack"></span> injected attack
+          </div>
+        </div>
+        <svg id="scoreChart" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="Composite anomaly score over time"></svg>
+      </div>
+
+      <div class="metrics-grid" id="metricsGrid"></div>
+
+      <div class="chart-panel">
+        <h2>Alerts</h2>
+        <div id="alertLog" class="event-log" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </div>
+    </section>
+
+    <aside class="control-pane">
+      <div class="panel">
+        <h2>Simulation</h2>
+        <div class="row">
+          <button id="playPauseBtn" class="btn btn-primary">Pause</button>
+          <button id="resetBtn" class="btn btn-ghost">Reset</button>
+        </div>
+        <p id="warmupStatus" class="hint-text"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Inject Attack Scenario</h2>
+        <p class="hint-text">Temporarily shifts traffic to simulate an attack, so you can watch the detector respond in real time.</p>
+        <div class="scenario-grid">
+          <button id="scenarioDdos" class="btn scenario-btn" data-scenario="ddos">DDoS Burst</button>
+          <button id="scenarioPortscan" class="btn scenario-btn" data-scenario="portscan">Port Scan</button>
+          <button id="scenarioExfil" class="btn scenario-btn" data-scenario="exfiltration">Exfiltration</button>
+          <button id="scenarioBeacon" class="btn scenario-btn" data-scenario="beaconing">Beaconing</button>
+        </div>
+        <div id="scenarioStatus" class="status-text"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Detector Tuning</h2>
+        <label class="field">
+          <span>Sensitivity (z-score threshold): <b id="thresholdLabel">4.0</b>σ</span>
+          <input type="range" id="thresholdSlider" min="2" max="6" step="0.1" value="4">
+        </label>
+        <label class="field">
+          <span>Baseline adaptation rate: <b id="alphaLabel">0.05</b></span>
+          <input type="range" id="alphaSlider" min="0.01" max="0.3" step="0.01" value="0.05">
+        </label>
+        <p class="hint-text">The baseline deliberately stops updating on any tick it flags as anomalous — otherwise a sustained attack would get smoothed into "normal" and the detector would go blind to its own alert. This rate instead controls how fast the baseline settles after warm-up, and how fast it re-stabilizes once an attack ends.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Detector Performance</h2>
+        <p class="hint-text">Computed against the ground truth of when an attack was actually injected. Precision drops with false alarms; recall drops with missed attacks.</p>
+        <div class="perf-grid">
+          <div class="perf-stat"><span class="perf-label">Precision</span><span id="statPrecision">—</span></div>
+          <div class="perf-stat"><span class="perf-label">Recall</span><span id="statRecall">—</span></div>
+          <div class="perf-stat"><span class="perf-label">TP</span><span id="statTP">0</span></div>
+          <div class="perf-stat"><span class="perf-label">FP</span><span id="statFP">0</span></div>
+          <div class="perf-stat"><span class="perf-label">FN</span><span id="statFN">0</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>About</h2>
+        <p class="hint-text">
+          Baseline "normal" behaviour is learned live via an EWMA mean/variance
+          per traffic metric (packets/sec, bytes/sec, avg packet size, unique
+          destination ports). Each new sample gets a z-score against that
+          baseline; a composite anomaly score is the largest absolute
+          z-score across metrics. The baseline only updates on ticks that
+          <i>aren't</i> flagged, so a sustained attack can't smooth itself
+          into "normal." A separate detector tracks the regularity
+          (coefficient of variation) of new-connection timing to catch
+          beaconing — a pattern that's <i>deliberately invisible</i> to the
+          magnitude-based z-scores, to demonstrate why one technique alone
+          isn't enough.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

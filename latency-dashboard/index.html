@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Delay & Latency Simulation Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <h1>Latency Dashboard</h1>
+    </div>
+    <div class="stats" role="status" aria-label="Simulation statistics">
+      <div class="stat"><span class="stat-label">Sent</span><span id="statSent">0</span></div>
+      <div class="stat"><span class="stat-label">Delivered</span><span id="statDelivered">0</span></div>
+      <div class="stat"><span class="stat-label">Dropped</span><span id="statDropped">0</span></div>
+      <div class="stat"><span class="stat-label">Avg Latency</span><span id="statAvg">0 ms</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="charts-pane">
+      <div class="chart-panel">
+        <div class="chart-header">
+          <h2>Latency Over Time</h2>
+          <div class="chart-legend">
+            <span class="legend-swatch line"></span> latency
+            <span class="legend-swatch drop"></span> dropped
+          </div>
+        </div>
+        <svg id="lineChart" viewBox="0 0 1000 280" preserveAspectRatio="none" role="img" aria-label="Line chart of latency over time"></svg>
+      </div>
+
+      <div class="chart-panel">
+        <div class="chart-header">
+          <h2>Latency Distribution</h2>
+          <span class="hint-text">last <span id="histWindowLabel">150</span> delivered packets</span>
+        </div>
+        <svg id="histogram" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="Histogram of latency distribution"></svg>
+      </div>
+
+      <div class="chart-panel session-stats">
+        <h2>Session Stats</h2>
+        <div class="session-grid">
+          <div class="session-stat"><span class="session-label">Min</span><span id="statMin">—</span></div>
+          <div class="session-stat"><span class="session-label">Max</span><span id="statMax">—</span></div>
+          <div class="session-stat"><span class="session-label">Jitter (σ)</span><span id="statJitter">—</span></div>
+          <div class="session-stat"><span class="session-label">Loss</span><span id="statLoss">0%</span></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="control-pane">
+      <div class="panel">
+        <h2>Network Conditions</h2>
+
+        <label class="field">
+          <span>Preset</span>
+          <select id="presetSelect" class="select">
+            <option value="custom">Custom</option>
+            <option value="fiber">Fiber / LAN</option>
+            <option value="wifi">Home Wi-Fi</option>
+            <option value="4g">4G / LTE</option>
+            <option value="satellite">Satellite</option>
+            <option value="dialup">Dial-up</option>
+            <option value="congested">Congested Link</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Base latency per hop: <b id="baseLatencyLabel">10</b> ms</span>
+          <input type="range" id="baseLatencySlider" min="1" max="600" step="1" value="10">
+        </label>
+
+        <label class="field">
+          <span>Hops: <b id="hopsLabel">4</b></span>
+          <input type="range" id="hopsSlider" min="1" max="15" step="1" value="4">
+        </label>
+
+        <label class="field">
+          <span>Jitter: ±<b id="jitterLabel">5</b> ms</span>
+          <input type="range" id="jitterSlider" min="0" max="100" step="1" value="5">
+        </label>
+
+        <label class="field">
+          <span>Packet loss: <b id="lossLabel">1</b>%</span>
+          <input type="range" id="lossSlider" min="0" max="20" step="0.5" value="1">
+        </label>
+
+        <label class="field">
+          <span>Bandwidth: <b id="bandwidthLabel">100</b> Mbps</span>
+          <input type="range" id="bandwidthSlider" min="0" max="100" step="1" value="66">
+        </label>
+
+        <label class="field">
+          <span>Send rate: <b id="rateLabel">5.0</b> / sec</span>
+          <input type="range" id="rateSlider" min="0.5" max="20" step="0.5" value="5">
+        </label>
+
+        <div class="row">
+          <button id="playPauseBtn" class="btn btn-primary">Pause</button>
+          <button id="resetBtn" class="btn btn-ghost">Reset</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>About</h2>
+        <p class="hint-text">
+          Each simulated packet's latency is modelled as propagation delay
+          (base latency × hops) + serialization delay (derived from
+          bandwidth) + randomized jitter, with an independent chance of
+          being dropped based on the packet loss setting.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

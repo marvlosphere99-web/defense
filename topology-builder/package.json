@@ -1,0 +1,33 @@
+{
+  "name": "interactive-network-topology-builder",
+  "version": "1.0.0",
+  "description": "Interactive Network Topology Builder desktop app",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.topologybuilder.app",
+    "productName": "Interactive Network Topology Builder",
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "script.js"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}

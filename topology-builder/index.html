@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Network Topology Builder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <h1>Topology Builder</h1>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="topoName" class="text-input name-input" placeholder="Untitled Topology" aria-label="Topology name">
+      <button id="newBtn" class="btn btn-ghost">New</button>
+      <button id="importBtn" class="btn btn-ghost">Import JSON</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button id="exportBtn" class="btn btn-primary">Export JSON</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="canvas-pane">
+      <div class="mode-toolbar" role="toolbar" aria-label="Editing mode">
+        <button class="mode-btn" data-mode="select" aria-pressed="true">Select / Move</button>
+        <button class="mode-btn" data-mode="addNode" aria-pressed="false">Add Node</button>
+        <button class="mode-btn" data-mode="addEdge" aria-pressed="false">Add Link</button>
+        <button class="mode-btn" data-mode="addRoute" aria-pressed="false">Define Route</button>
+      </div>
+
+      <div class="node-type-picker" id="nodeTypePicker" hidden>
+        <span>New node type</span>
+        <select id="newNodeType" class="select"></select>
+      </div>
+
+      <svg id="canvas" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Network topology canvas"></svg>
+
+      <div id="hint" class="hint-overlay" role="status" aria-live="polite"></div>
+      <div id="legend" class="legend-overlay" aria-label="Node type legend"></div>
+    </section>
+
+    <aside class="side-pane">
+      <div class="panel" id="propertiesPanel">
+        <h2>Properties</h2>
+        <p id="propertiesEmpty" class="empty-state">Select a node or link to edit it, or switch mode above to add one.</p>
+
+        <div id="nodeProps" hidden>
+          <label class="field">
+            <span>Type</span>
+            <select id="nodeTypeSelect" class="select"></select>
+          </label>
+          <label class="field">
+            <span>Label</span>
+            <input type="text" id="nodeLabelInput" class="text-input">
+          </label>
+          <label class="field">
+            <span>Sub-label</span>
+            <input type="text" id="nodeSubInput" class="text-input" placeholder="e.g. 192.168.1.1">
+          </label>
+          <button id="deleteNodeBtn" class="btn btn-ghost full-width">Delete Node</button>
+        </div>
+
+        <div id="edgeProps" hidden>
+          <label class="field">
+            <span>Link label</span>
+            <input type="text" id="edgeLabelInput" class="text-input" placeholder="e.g. 1 Gbps, wireless">
+          </label>
+          <button id="deleteEdgeBtn" class="btn btn-ghost full-width">Delete Link</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Routes</h2>
+        <p class="hint-text">In "Define Route" mode, click connected nodes in order, then Finish. Routes are the paths a packet can travel in the Packet Journey Visualizer.</p>
+        <div class="row" id="routeBuildingRow" hidden>
+          <button id="finishRouteBtn" class="btn btn-primary">Finish Route</button>
+          <button id="cancelRouteBtn" class="btn btn-ghost">Cancel</button>
+        </div>
+        <div id="routeList" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Topology JSON</h2>
+        <p class="hint-text">Live preview — compatible with the Packet Journey Visualizer's custom topology field.</p>
+        <textarea id="jsonPreview" class="json-input" rows="10" spellcheck="false" readonly></textarea>
+      </div>
+
+      <div class="panel">
+        <div id="builderStatus" class="status-text" role="status" aria-live="polite"></div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
